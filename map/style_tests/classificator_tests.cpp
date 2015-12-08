@@ -6,8 +6,22 @@
 #include "indexer/feature_data.hpp"
 #include "indexer/map_style_reader.hpp"
 
+#include "Platform/platform.hpp"
+
 #include "base/logging.hpp"
 
+namespace
+{
+void UnitTestInitPlatform()
+{
+  Platform & pl = GetPlatform();
+  CommandLineOptions const & options = GetTestingOptions();
+  if (options.m_dataPath)
+    pl.SetWritableDirForTests(options.m_dataPath);
+  if (options.m_resourcePath)
+    pl.SetResourceDir(options.m_resourcePath);
+}
+}
 
 namespace
 {
@@ -51,6 +65,8 @@ namespace
 
 UNIT_TEST(Classificator_CheckConsistency)
 {
+  UnitTestInitPlatform();
+
   RunForEveryMapStyle([]()
   {
     classificator::Load();
@@ -127,6 +143,8 @@ void CheckLineStyles(Classificator const & c, string const & name)
 
 UNIT_TEST(Classificator_DrawingRules)
 {
+  UnitTestInitPlatform();
+
   RunForEveryMapStyle([]()
   {
     classificator::Load();
@@ -189,6 +207,8 @@ pair<int, int> GetMinMax(int level, vector<uint32_t> const & types)
 
 UNIT_TEST(Classificator_AreaPriority)
 {
+  UnitTestInitPlatform();
+  
   RunForEveryMapStyle([]()
   {
     classificator::Load();
